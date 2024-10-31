@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+	<style>
+		body, html {
+            height: 100%;
+            margin: 0;
+            font-family:sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e0eafc;
+            background: linear-gradient(90deg, #e0eafc 0%, #cfdef3 100%);
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 32px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .container img {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 16px;
+        }
+
+        .container h1 {
+            margin-bottom: 24px;
+            font-size: 24px;
+        }
+
+        .container form {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        
+
+        .container input {
+            padding: 12px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 8px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .container button {
+            padding: 12px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 8px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .container button:hover {
+            background-color: #45a049;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .success {
+            color: green;
+            margin-top: 10px;
+        }
+
+        .register-link, .forgot-password-link {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+	</style>
+</head>
+<body>
+	<div class="container">
+        <img src="logo_2.png" alt="Logo">
+		<h2>Login</h2>
+		<form>
+			<label for="username">Username:</label>
+			<input type="text" id="username" class="form-control" required><br><br>
+			<label for="password">Password:</label>
+			<input type="password" id="password" class="form-control" required><br><br>
+			<button><a href="./admin_dashboard.html">Login</button>
+			<p>Don't have an account? <a href="register.html">Register</a></p>
+		</form>
+	</div>
+</body>
+</html>

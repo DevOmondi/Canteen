@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <style>
+        body, html {
+            height: 100vh; 
+            margin: 0;
+            font-family: sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fcfcfc;
+            background: linear-gradient(90deg, #e0eafc 0%, #cfdef3 100%);
+        }
+
+        .container {
+            max-width: 450px; 
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .container img {
+            width: 80px; 
+            height: 80px;
+            margin-bottom: 12px;
+            padding: 5px;
+        }
+
+        .container h1 {
+            margin-bottom: 8px;
+            font-size: 18px; 
+        }
+
+        .container form {
+            display: flex;
+            flex-direction: column;
+            padding: 18px;
+            margin-top: -35px;
+            width: 100%
+        }
+
+        .container label {
+            padding: -5px;
+        }
+        .container input, .container select {
+            padding: 8px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 8px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .container button {
+            padding: 10px;
+            margin: 4px 0;
+            border: none;
+            border-radius: 8px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .container button:hover {
+            background-color: #45a049;
+        }
+
+        .success {
+            color: green;
+            margin-top: 8px;
+        }
+
+        .error {
+            color: red;
+            margin-top: 8px;
+        }
+
+        .login-link {
+            margin-top: 10px;
+            font-size: 14px;
+            text-decoration: none;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="logo_2.png" alt="Logo">
+        <h2>Register</h2>
+        <form onsubmit="redirectToLogin(event)">
+            <label for="username">Username:</label>
+            <input type="text" id="username" class="form-control" required><br><br>
+            <label for="email">Email:</label>
+            <input type="email" id="email" class="form-control" required><br><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" class="form-control" required><br><br>
+            <label for="role">Role:</label>
+            <select id="role" class="form-control" required>
+                <option value="admin">Admin</option>
+                <option value="staff">Staff</option>
+            </select><br><br>
+            <button type="submit" class="btn">Register</button>
+            <p>Already have an account? <a href="login.html">Login</a></p>
+        </form>
+    </div>
+
+    <script>
+        function redirectToLogin(event) {
+            event.preventDefault(); // Prevent the default form submission
+            window.location.href = 'login.html'; // Redirect to the login page
+        }
+    </script>
+</body>
+</html>
