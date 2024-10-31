@@ -198,7 +198,7 @@
                 // Counts for Total Staff, Products, Orders, and Pre-Orders
 
                 // Total Staff
-                $totalStaffQuery = "SELECT COUNT(*) AS total_staff FROM staff";
+                $totalStaffQuery = "SELECT COUNT(*) AS total_staff FROM users WHERE role='staff'";
                 $totalStaffResult = mysqli_query($conn, $totalStaffQuery);
                 $totalStaff = mysqli_fetch_assoc($totalStaffResult)['total_staff'];
 
@@ -259,27 +259,33 @@
             <div class="card">
                 <h3>Add New Staff</h3>
                 <?php
-                    // Assuming $conn is your database connection
-                    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['staffs'])) {
-                        // Retrieve and sanitize form inputs
-                        $name = mysqli_real_escape_string($conn, $_POST['staff-name']);
-                        $email = mysqli_real_escape_string($conn, $_POST['staff-email']);
-                        $role = mysqli_real_escape_string($conn, $_POST['staff-role']);
+                // Assuming $conn is your database connection
+                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['staffs'])) {
+                    // Retrieve and sanitize form inputs
+                    $name = mysqli_real_escape_string($conn, $_POST['staff-name']);
+                    $email = mysqli_real_escape_string($conn, $_POST['staff-email']);
+                    $role = mysqli_real_escape_string($conn, $_POST['staff-role']);
 
-                        // Basic validation
-                        if (!empty($name) && !empty($email) && !empty($role)) {
+                    // Basic validation
+                    if (!empty($name) && !empty($email) && !empty($role)) {
+                        // Additional email validation
+                        // if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
                             // Insert data into the database
-                            $query = "INSERT INTO users (name, email, 	role) VALUES ('$name', '$email', '$role')";
+                            $query = "INSERT INTO users (name, email, role) VALUES ('$name', '$email', '$role')";
                             
                             if (mysqli_query($conn, $query)) {
-                                echo "<script>alert('Staff member added successfully.');</script>";
+                                echo "<script>alert('Staff member added successfully.'); window.location.href = 'index.php';</script>";
                             } else {
                                 echo "<p>Error: " . mysqli_error($conn) . "</p>";
                             }
-                        } else {
-                            echo "<p>All fields are required.</p>";
-                        }
+                        // } else {
+                        //     echo "<p>Invalid email format.</p>";
+                        // }
+                    } else {
+                        echo "<script>alert('All fields are required.'); window.location.href = 'index.php';</script>";
+                        // echo "<p>All fields are required.</p>";
                     }
+                }
                 ?>
 
                 <form method="POST">
@@ -300,6 +306,7 @@
                     </div>
                     <button type="submit" name="staffs" class="button">Add Staff</button>
                 </form>
+
 
             </div>
         </div>
