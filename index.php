@@ -3,9 +3,19 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="Description" content="Enter your description here"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+   
     <title>Canteen Admin Dashboard</title>
     <style>
         * {
@@ -183,25 +193,61 @@
         <!-- Dashboard section -->
         <div id="dashboard" class="content-section active">
             <h1>Welcome, Admin</h1>
+            <?php
+                // Assuming $conn is your database connection
+                // Counts for Total Staff, Products, Orders, and Pre-Orders
+
+                // Total Staff
+                $totalStaffQuery = "SELECT COUNT(*) AS total_staff FROM staff";
+                $totalStaffResult = mysqli_query($conn, $totalStaffQuery);
+                $totalStaff = mysqli_fetch_assoc($totalStaffResult)['total_staff'];
+
+                // Total Products
+                $totalProductsQuery = "SELECT COUNT(*) AS total_products FROM products";
+                $totalProductsResult = mysqli_query($conn, $totalProductsQuery);
+                $totalProducts = mysqli_fetch_assoc($totalProductsResult)['total_products'];
+
+                // Products In Stock
+                $inStockQuery = "SELECT COUNT(*) AS in_stock FROM products WHERE quantity_in_stock > 0";
+                $inStockResult = mysqli_query($conn, $inStockQuery);
+                $inStock = mysqli_fetch_assoc($inStockResult)['in_stock'];
+
+                // Products Out of Stock
+                $outOfStockQuery = "SELECT COUNT(*) AS out_of_stock FROM products WHERE quantity_in_stock = 0";
+                $outOfStockResult = mysqli_query($conn, $outOfStockQuery);
+                $outOfStock = mysqli_fetch_assoc($outOfStockResult)['out_of_stock'];
+
+                // Total Orders
+                $totalOrdersQuery = "SELECT COUNT(*) AS total_orders FROM orders";
+                $totalOrdersResult = mysqli_query($conn, $totalOrdersQuery);
+                $totalOrders = mysqli_fetch_assoc($totalOrdersResult)['total_orders'];
+
+                // Total Pre-Orders
+                $totalPreordersQuery = "SELECT COUNT(*) AS total_preorders FROM orders WHERE status = 'pre-order'";
+                $totalPreordersResult = mysqli_query($conn, $totalPreordersQuery);
+                $totalPreorders = mysqli_fetch_assoc($totalPreordersResult)['total_preorders'];
+            ?>
+
             <div class="stats-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
                 <div class="card">
                     <h3>Total Staff</h3>
-                    <p class="stat-number" id="total-staff">Loading...</p>
+                    <p class="stat-number" id="total-staff"><?= $totalStaff ?></p>
                 </div>
                 <div class="card">
                     <h3>Products</h3>
-                    <p class="stat-number" id="total-products">Loading...</p>
+                    <p class="stat-number" id="total-products"><?= $totalProducts ?></p>
                     <div class="stat-detail">
-                        <p>In Stock: <span id="in-stock">Loading...</span></p>
-                        <p>Out of Stock: <span id="out-of-stock">Loading...</span></p>
+                        <p>In Stock: <span id="in-stock"><?= $inStock ?></span></p>
+                        <p>Out of Stock: <span id="out-of-stock"><?= $outOfStock ?></span></p>
                     </div>
                 </div>
                 <div class="card">
                     <h3>Orders</h3>
-                    <p class="stat-number" id="total-orders">Loading...</p>
-                    <p class="stat-detail">Pre-Orders: <span id="total-preorders">Loading...</span></p>
+                    <p class="stat-number" id="total-orders"><?= $totalOrders ?></p>
+                    <p class="stat-detail">Pre-Orders: <span id="total-preorders"><?= $totalPreorders ?></span></p>
                 </div>
             </div>
+
         </div>
 
         <!-- Manage Staff section -->
@@ -212,24 +258,49 @@
             </div>
             <div class="card">
                 <h3>Add New Staff</h3>
-                <form>
+                <?php
+                    // Assuming $conn is your database connection
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['staffs'])) {
+                        // Retrieve and sanitize form inputs
+                        $name = mysqli_real_escape_string($conn, $_POST['staff-name']);
+                        $email = mysqli_real_escape_string($conn, $_POST['staff-email']);
+                        $role = mysqli_real_escape_string($conn, $_POST['staff-role']);
+
+                        // Basic validation
+                        if (!empty($name) && !empty($email) && !empty($role)) {
+                            // Insert data into the database
+                            $query = "INSERT INTO users (name, email, 	role) VALUES ('$name', '$email', '$role')";
+                            
+                            if (mysqli_query($conn, $query)) {
+                                echo "<script>alert('Staff member added successfully.');</script>";
+                            } else {
+                                echo "<p>Error: " . mysqli_error($conn) . "</p>";
+                            }
+                        } else {
+                            echo "<p>All fields are required.</p>";
+                        }
+                    }
+                ?>
+
+                <form method="POST">
                     <div class="form-group">
                         <label for="staff-name">Name:</label>
-                        <input type="text" id="staff-name" name="staff-name">
+                        <input type="text" id="staff-name" name="staff-name" required>
                     </div>
                     <div class="form-group">
                         <label for="staff-email">Email:</label>
-                        <input type="email" id="staff-email" name="staff-email">
+                        <input type="email" id="staff-email" name="staff-email" required>
                     </div>
                     <div class="form-group">
                         <label for="staff-role">Role:</label>
-                        <select id="staff-role" name="staff-role">
+                        <select id="staff-role" name="staff-role" required>
                             <option value="admin">Admin</option>
                             <option value="staff">Staff</option>
                         </select>
                     </div>
-                    <button type="submit" class="button">Add Staff</button>
+                    <button type="submit" name="staffs" class="button">Add Staff</button>
                 </form>
+
             </div>
         </div>
 
@@ -241,26 +312,73 @@
             </div>
             <div class="card">
                 <h3>Add New Product</h3>
-                <form>
+                
+
+                <form method="POST" action="add_products.php">
                     <div class="form-group">
                         <label for="product-name">Name:</label>
-                        <input type="text" id="product-name" name="product-name">
+                        <input type="text" id="product-name" name="product-name" required>
                     </div>
                     <div class="form-group">
                         <label for="product-price">Price:</label>
-                        <input type="number" id="product-price" name="product-price">
+                        <input type="number" id="product-price" name="product-price" required>
                     </div>
-                    <button type="submit" class="button">Add Product</button>
+                    <div class="form-group">
+                        <label for="quantity_in_stock">Quantity:</label>
+                        <input type="number" id="quantity_in_stock" name="quantity_in_stock" min='0' required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea class="form-control" name="description" id="description" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="button" name="add_product">Add Product</button>
                 </form>
+
                 <h2>Current Products</h2>
-                <table border="1">
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Action</th>
-                    </tr>
-                </table>
+                <?php
+                // Assuming $conn is your database connection
+                $query = "SELECT id, name, price, quantity_in_stock, created_at FROM products";
+                $result = mysqli_query($conn, $query);
+                ?>
+
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Quantity in Stock</th>
+                                <th scope="col">Created At</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            if (mysqli_num_rows($result) > 0) {
+                                while ($row = mysqli_fetch_assoc($result)) {
+                                    echo "<tr>";
+                                    echo "<th scope='row'>" . $row['id'] . "</th>";
+                                    echo "<td>" . htmlspecialchars($row['name']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['price']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['quantity_in_stock']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['created_at']) . "</td>";
+                                    echo "<td>";
+                                    echo "<form method='POST' action='delete.php' style='display:inline;' onsubmit='return confirm(\"Are you sure you want to delete this product?\");'>";
+                                    echo "<input type='hidden' name='delete_id' value='" . $row['id'] . "'>";
+                                    echo "<input type='hidden' name='table' value='products'>";
+                                    echo "<button type='submit' name='delete' class='btn btn-danger btn-sm'><i class='fa fa-trash'></i> Delete</button>";
+                                    echo "</form>";
+                                    echo "</td>";
+                                    echo "</tr>";
+                                }
+                            } else {
+                                echo "<tr><td colspan='6' class='text-center'>No products available</td></tr>";
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
 
 
             </div>
@@ -272,6 +390,60 @@
             <h1>Order History</h1>
             <div class="card">
                 <h3>All Orders</h3>
+
+                <?php
+// Assuming $conn is your database connection
+$query = "SELECT id, user_id, order_type, status, total_amount, pickup_datetime, created_at, updated_at FROM orders";
+$result = mysqli_query($conn, $query);
+?>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">User ID</th>
+                <th scope="col">Order Type</th>
+                <th scope="col">Status</th>
+                <th scope="col">Total Amount</th>
+                <th scope="col">Pickup Date & Time</th>
+                <th scope="col">Created At</th>
+                <th scope="col">Updated At</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    echo "<tr>";
+                    echo "<th scope='row'>" . $row['id'] . "</th>";
+                    echo "<td>" . htmlspecialchars($row['user_id']) . "</td>";
+                    echo "<td>" . htmlspecialchars($row['order_type']) . "</td>";
+                    echo "<td>" . htmlspecialchars($row['status']) . "</td>";
+                    echo "<td>" . htmlspecialchars($row['total_amount']) . "</td>";
+                    echo "<td>" . htmlspecialchars($row['pickup_datetime']) . "</td>";
+                    echo "<td>" . htmlspecialchars($row['created_at']) . "</td>";
+                    echo "<td>" . htmlspecialchars($row['updated_at']) . "</td>";
+                    echo "<td>";
+                    echo "<form method='POST' action='delete.php' style='display:inline;' onsubmit='return confirm(\"Are you sure you want to delete this order?\");'>";
+                    echo "<input type='hidden' name='delete_id' value='" . $row['id'] . "'>";
+                    echo "<input type='hidden' name='table' value='orders'>";
+                    echo "<button type='submit' name='delete' class='btn btn-danger btn-sm'><i class='fa fa-trash'></i> Delete</button>";
+                    echo "</form>";
+                    echo "</td>";
+                    echo "</tr>";
+                }
+            } else {
+                echo "<tr><td colspan='9' class='text-center'>No orders available</td></tr>";
+            }
+            ?>
+        </tbody>
+    </table>
+</div>
+
+
+
             </div>
         </div>
 
@@ -294,57 +466,59 @@
         </div>
     </div>
 
-    <script>
-        function updateDashboardStats() {
-            fetch('./server/get_stats.php')
-                .then(response => response.json())
-                .then(data => {
-                    // Update staff stats
-                    document.getElementById('total-staff').textContent = data.total_staff;
+<script>
+    function updateDashboardStats() {
+        fetch('./server/get_stats.php')
+            .then(response => response.json())
+            .then(data => {
+                // Update staff stats
+                document.getElementById('total-staff').textContent = data.total_staff;
 
-                    // Update product stats
-                    document.getElementById('total-products').textContent = data.products.total_products;
-                    document.getElementById('in-stock').textContent = data.products.in_stock;
-                    document.getElementById('out-of-stock').textContent = data.products.out_of_stock;
+                // Update product stats
+                document.getElementById('total-products').textContent = data.products.total_products;
+                document.getElementById('in-stock').textContent = data.products.in_stock;
+                document.getElementById('out-of-stock').textContent = data.products.out_of_stock;
 
-                    // Update order stats
-                    document.getElementById('total-orders').textContent = data.orders.total_orders;
-                    document.getElementById('total-preorders').textContent = data.orders.total_preorders;
-                })
-                .catch(error => console.error('Error fetching stats:', error));
-        }
+                // Update order stats
+                document.getElementById('total-orders').textContent = data.orders.total_orders;
+                document.getElementById('total-preorders').textContent = data.orders.total_preorders;
+            })
+            .catch(error => console.error('Error fetching stats:', error));
+    }
 
-        // Call updateDashboardStats when the page loads
-        document.addEventListener('DOMContentLoaded', updateDashboardStats);
+    // Call updateDashboardStats when the page loads
+    document.addEventListener('DOMContentLoaded', updateDashboardStats);
 
-        function showSection(sectionId, event) {
-            event.preventDefault(); // Prevent the default link behavior
+    function showSection(sectionId, event) {
+        event.preventDefault(); // Prevent the default link behavior
 
-            // Hide all sections
-            const sections = document.querySelectorAll('.content-section');
-            sections.forEach(section => {
-                section.classList.remove('active');
-            });
+        // Hide all sections
+        const sections = document.querySelectorAll('.content-section');
+        sections.forEach(section => {
+            section.classList.remove('active');
+        });
 
-            // Remove active class from all links
-            const links = document.querySelectorAll('.sidebar a');
-            links.forEach(link => {
-                link.classList.remove('active');
-            });
+        // Remove active class from all links
+        const links = document.querySelectorAll('.sidebar a');
+        links.forEach(link => {
+            link.classList.remove('active');
+        });
 
-            // Show the selected sections
-            document.getElementById(sectionId).classList.add('active');
-            event.currentTarget.classList.add('active'); // Set the clicked link as active
-        }
+        // Show the selected sections
+        document.getElementById(sectionId).classList.add('active');
+        event.currentTarget.classList.add('active'); // Set the clicked link as active
+    }
 
-        if (sectionId === 'dashboard') {
-            updateDashboardStats();
-        }
+    if (sectionId === 'dashboard') {
+        updateDashboardStats();
+    }
 
-        function logout() {
-            alert("Logging out..."); // Implement actual logout logic as needed
-        }
-    </script>
+    function logout() {
+        alert("Logging out..."); // Implement actual logout logic as needed
+    }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
 </body>
-
 </html>
