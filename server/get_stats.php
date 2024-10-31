@@ -1,5 +1,5 @@
 <?php
-require './server/db.php';
+require '../server/db.php';
 
 function getDashboardStats($pdo) {
     $stats = [];
