@@ -288,7 +288,7 @@
                 }
                 ?>
 
-                <form method="POST">
+                <form method="POST" action="add_staff.php">
                     <div class="form-group">
                         <label for="staff-name">Name:</label>
                         <input type="text" id="staff-name" name="staff-name" required>
